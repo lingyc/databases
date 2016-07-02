@@ -2,19 +2,31 @@ var models = require('../models');
 
 module.exports = {
   messages: {
+    storage: [ ],
     get: function (req, res) {
 
-      res.send({});
-
-
+      res.header(headers);
+      res.set(200);
+      res.send(
+        {
+          results: [{
+          createdAt: '2001-02',
+          roomname: 'cows',
+          text: 'sdfsdsd',
+          username: 'sdfsds'
+        }]
+      });
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {
+      console.log('sgp');
+      console.log(req.body);
+      models.messages.post(req.body.text);
 
-      collectData(req, function(data) {
-        console.log(data);
-        sendResponse(res, data);
-      });
+
+      // collectData(req, function(data) {
+      //   sendResponse(res, data);
+      // });
     } // a function which handles posting a message to the database
   },
 
@@ -41,9 +53,10 @@ var sendResponse = function(response, data, statusCode) {
 };
 
 var collectData = function(request, callback) {
+  
   var data = '';
   request.on('data', function(chunk) {
-    console.log('allabout chunk:',typeof chunk,chunk);
+    console.log(43434324)
     data += chunk;
   });
   request.on('end', function() {
