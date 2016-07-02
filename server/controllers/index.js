@@ -10,18 +10,19 @@ module.exports = {
       res.send(
         {
           results: [{
-          createdAt: '2001-02',
-          roomname: 'cows',
-          text: 'sdfsdsd',
-          username: 'sdfsds'
-        }]
-      });
+            createdAt: '2001-02',
+            roomname: 'cows',
+            text: 'sdfsdsd',
+            username: 'sdfsds'
+          }]
+        });
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {
       console.log('sgp');
       console.log(req.body);
       models.messages.post(req.body.text);
+
 
 
       // collectData(req, function(data) {
@@ -33,8 +34,26 @@ module.exports = {
   users: {
     // Ditto as above
     get: function (req, res) {},
-    post: function (req, res) {}
+    post: function (req, res) {
+
+      console.log('this is reultttt',req.body);
+      models.users.post(req.body.username);
+
+    }
+  },
+
+  rooms: {
+    // Ditto as above
+    get: function (req, res) {},
+    post: function (req, res) {
+
+      console.log('this is reultttt',req.body);
+      models.rooms.post(req.body.roomname);
+
+    }
   }
+
+
 };
 
 
@@ -50,16 +69,4 @@ var sendResponse = function(response, data, statusCode) {
   statusCode = statusCode || 200;
   response.writeHead(statusCode, headers);
   response.end(JSON.stringify(data));
-};
-
-var collectData = function(request, callback) {
-  
-  var data = '';
-  request.on('data', function(chunk) {
-    console.log(43434324)
-    data += chunk;
-  });
-  request.on('end', function() {
-    callback(JSON.parse(JSON.stringify(data)));
-  });
 };
