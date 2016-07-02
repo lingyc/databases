@@ -3,7 +3,7 @@ var app = {
 
   //TODO: The current 'toggleFriend' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: 'http://127.0.0.1:3000/classes/messages/',
+  server: 'http://127.0.0.1:3000/classes/',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -13,6 +13,23 @@ var app = {
     // Get username
     app.username = window.location.search.substr(10);
 
+    // $.post(app.server + '/users', JSON.stringify({username: app.username}) , function(data ,error ){
+    //   console.log(data, error);
+
+    // });
+
+    $.ajax({
+      url: app.server + '/users',
+      type: 'POST',
+      data: JSON.stringify({username : app.username}),
+      contentType: 'application/json',
+      success: function (data) {
+        // Trigger a fetch to update the messages, pass true to animate
+      },
+      error: function (data) {
+        console.error('chatterbox: Failed to send message', data);
+      }
+    });
     // Cache jQuery selectors
     app.$message = $('#message');
     app.$chats = $('#chats');
@@ -23,7 +40,22 @@ var app = {
     app.$chats.on('click', '.username', app.toggleFriend);
     app.$send.on('submit', app.handleSubmit);
     app.$roomSelect.on('change', app.saveRoom);
+    app.$roomSelect.on('change', function(evt) {
+      $.ajax({
+        url: app.server + '/rooms',
+        type: 'POST',
+        data: JSON.stringify({roomname: evt.target.value}),
+        contentType: 'application/json',
+        success: function (data) {
 
+          // Trigger a fetch to update the messages, pass true to animate
+          app.fetch();
+        },
+        error: function (data) {
+          console.error('chatterbox: Failed to send message', data);
+        }
+      });
+    });
     // Fetch previous messages
     app.startSpinner();
     app.fetch(false);
@@ -39,7 +71,7 @@ var app = {
 
     // POST the message to the server
     $.ajax({
-      url: app.server,
+      url: app.server + '/messages',
       type: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -57,7 +89,7 @@ var app = {
   fetch: function(animate) {
     //console.log('it\'s 300 ms')
     $.ajax({
-      url: app.server,
+      url: app.server + '/messages',
       type: 'GET',
       contentType: 'application/json',
       data: { order: '-createdAt'},
@@ -136,10 +168,12 @@ var app = {
 
   addRoom: function(roomname) {
     // Prevent XSS by escaping with DOM methods
+    console.log(roomname);
     var $option = $('<option/>').val(roomname).text(roomname);
 
     // Add to select
     app.$roomSelect.append($option);
+    console.log(app.$roomSelect);
   },
 
   addMessage: function(data) {
