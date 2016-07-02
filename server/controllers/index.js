@@ -4,18 +4,14 @@ module.exports = {
   messages: {
     storage: [ ],
     get: function (req, res) {
-
       res.header(headers);
       res.set(200);
-      res.send(
-        {
-          results: [{
-            createdAt: '2001-02',
-            roomname: 'cows',
-            text: 'sdfsdsd',
-            username: 'sdfsds'
-          }]
-        });
+      models.messages.get(function(data) {
+        console.log(data);
+        res.send({results: data});
+      });
+      // console.log(models.messagesArray);
+      // res.send(models.messagesArray);
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {

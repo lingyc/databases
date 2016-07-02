@@ -19,7 +19,7 @@ var app = {
     // });
 
     $.ajax({
-      url: app.server + '/users',
+      url: app.server + 'users',
       type: 'POST',
       data: JSON.stringify({username : app.username}),
       contentType: 'application/json',
@@ -42,14 +42,13 @@ var app = {
     app.$roomSelect.on('change', app.saveRoom);
     app.$roomSelect.on('change', function(evt) {
       $.ajax({
-        url: app.server + '/rooms',
+        url: app.server + 'rooms',
         type: 'POST',
         data: JSON.stringify({roomname: evt.target.value}),
         contentType: 'application/json',
         success: function (data) {
 
           // Trigger a fetch to update the messages, pass true to animate
-          app.fetch();
         },
         error: function (data) {
           console.error('chatterbox: Failed to send message', data);
@@ -71,7 +70,7 @@ var app = {
 
     // POST the message to the server
     $.ajax({
-      url: app.server + '/messages',
+      url: app.server + 'messages',
       type: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -89,12 +88,12 @@ var app = {
   fetch: function(animate) {
     //console.log('it\'s 300 ms')
     $.ajax({
-      url: app.server + '/messages',
+      url: app.server + 'messages',
       type: 'GET',
       contentType: 'application/json',
       data: { order: '-createdAt'},
       success: function(data) {
-        
+        console.log('what we get from fetch',data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
@@ -106,12 +105,12 @@ var app = {
         if (mostRecentMessage.objectId !== app.lastMessageId || app.roomname !== displayedRoom) {
           // Update the UI with the fetched rooms
           app.populateRooms(data.results);
-
           // Update the UI with the fetched messages
           app.populateMessages(data.results, animate);
 
           // Store the ID of the most recent message
           app.lastMessageId = mostRecentMessage.objectId;
+
         }
       },
       error: function(data) {
@@ -127,9 +126,11 @@ var app = {
   populateMessages: function(results, animate) {
     // Clear existing messages
 
+
     app.clearMessages();
     app.stopSpinner();
     if (Array.isArray(results)) {
+
       // Add all fetched messages
       results.forEach(app.addMessage);
     }
@@ -173,7 +174,6 @@ var app = {
 
     // Add to select
     app.$roomSelect.append($option);
-    console.log(app.$roomSelect);
   },
 
   addMessage: function(data) {
