@@ -43,9 +43,9 @@ module.exports = {
     get: function (req, res) {},
     post: function (req, res) {
 
-      console.log('this is reultttt',req.body);
+      console.log('this is reultttt', req.body);
       models.rooms.post(req.body.roomname);
-
+      res.end();
     }
   }
 
